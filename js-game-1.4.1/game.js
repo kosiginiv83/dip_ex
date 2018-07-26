@@ -1,19 +1,6 @@
 'use strict';
 
 
-function checkVector(obj) {
-  try {
-    if (obj instanceof Vector) {
-      return true;
-    } else {
-      throw new Error('Объект должен быть типа Vector');
-    }
-  } catch(err) {
-    console.log(err);
-  }
-}
-
-
 class Vector {
   constructor(x=0, y=0) {
     this.x = x;
@@ -21,8 +8,15 @@ class Vector {
   }
 
   plus(obj) {
-    if ( checkVector(obj) ) {
-      return new Vector( this.x + obj.x, this.y + obj.y );
+    try {
+      if ( obj instanceof Vector ) {
+        return new Vector( this.x + obj.x, this.y + obj.y );
+      } else {
+        throw new Error('Можно прибавлять к вектору только вектор типа Vector');
+      }
+
+    } catch(err) {
+      console.log(err);
     }
   }
 
@@ -41,14 +35,28 @@ console.log(`Текущее расположение: ${finish.x}:${finish.y}`);
 
 
 class Actor {
-  constructor(pos=new Vector(0, 0), size=new Vector(1, 1), speed=new Vector(0, 0)) {
-    let isVector = false;
-    for (let arg of arguments) {
-      isVector = checkVector(arg);
-      console.log('isVector', isVector);
+  constructor(pos, size, speed) {
+    try {
+      this.pos = pos || new Vector(0, 0);
+      this.size = size || new Vector(1, 1);
+      this.speed = speed || new Vector(0, 0);
+
+      for (let arg of arguments) {
+        if ( !(arg instanceof Vector) ) {
+          throw new Error('Объект должен быть типа Vector');
+        }
+      }
+
+    } catch(err) {
+      console.log(err);
     }
   }
+
+  act() {
+
+  }
 }
+
 
 const items = new Map();
 const player = new Actor();
