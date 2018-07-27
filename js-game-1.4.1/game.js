@@ -35,14 +35,15 @@ console.log(`Текущее расположение: ${finish.x}:${finish.y}`);
 
 
 class Actor {
-  constructor(pos, size, speed) {
+  constructor( pos=new Vector(0, 0), size=new Vector(1, 1),
+              speed=new Vector(0, 0) ) {
     try {
-      this.pos = pos || new Vector(0, 0);
-      this.size = size || new Vector(1, 1);
-      this.speed = speed || new Vector(0, 0);
+      this.pos = pos;
+      this.size = size;
+      this.speed = speed;
 
-      for (let arg of arguments) {
-        if ( !(arg instanceof Vector) ) {
+      for (let key in this) {
+        if ( !(this[key] instanceof Vector) ) {
           throw new Error('Объект должен быть типа Vector');
         }
       }
@@ -55,11 +56,14 @@ class Actor {
   act() {
 
   }
+
+
 }
 
 
 const items = new Map();
 const player = new Actor();
+
 items.set('Игрок', player);
 items.set('Первая монета', new Actor(new Vector(10, 10)));
 items.set('Вторая монета', new Actor(new Vector(15, 5)));
