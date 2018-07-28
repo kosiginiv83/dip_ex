@@ -24,14 +24,14 @@ class Vector {
     return new Vector(this.x * mult, this.y * mult);
   }
 }
-
+/*
 const start = new Vector(30, 50);
 const moveTo = new Vector(5, 10);
 const finish = start.plus(moveTo.times(2));
 
 console.log(`Исходное расположение: ${start.x}:${start.y}`);
 console.log(`Текущее расположение: ${finish.x}:${finish.y}`);
-
+*/
 
 
 class Actor {
@@ -57,7 +57,41 @@ class Actor {
 
   }
 
+  get left() {
+    return this.pos.x;
+  }
 
+  get top() {
+    return this.pos.y;
+  }
+
+  get right() {
+    return this.pos.x + this.size.x;
+  }
+
+  get bottom() {
+    return this.pos.y + this.size.y;
+  }
+
+  isIntersect(obj) {
+    try {
+      if ( arguments.lenght === 0 ) {
+        throw new Error('Функция должна вызываться с объектом типа Actor');
+      } else if ( !(obj instanceof Actor) ) {
+        throw new Error('Движущийся объект должен быть типа Actor');
+      } else if ( this === obj ) {
+        return false;
+      } else {
+        let horizontal = (obj.right > this.left+1) && (obj.left < this.right-1);
+        let vertical = (obj.bottom > this.top+1) && (obj.top < this.bottom-1);
+
+        return (horizontal || vertical) ? true : false;
+      }
+
+    } catch(err) {
+      console.log(err);
+    }
+  }
 }
 
 
