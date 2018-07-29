@@ -73,6 +73,10 @@ class Actor {
     return this.pos.y + this.size.y;
   }
 
+  get type() {
+    return 'actor';
+  }
+
   isIntersect(obj) {
     try {
       if ( arguments.lenght === 0 ) {
@@ -82,8 +86,8 @@ class Actor {
       } else if ( this === obj ) {
         return false;
       } else {
-        let horizontal = (obj.right > this.left+1) && (obj.left < this.right-1);
-        let vertical = (obj.bottom > this.top+1) && (obj.top < this.bottom-1);
+        let horizontal = (obj.right >= this.left) && (obj.left <= this.right);
+        let vertical = (obj.bottom >= this.top) && (obj.top <= this.bottom);
 
         return (horizontal || vertical) ? true : false;
       }
@@ -93,8 +97,7 @@ class Actor {
     }
   }
 }
-
-
+/*
 const items = new Map();
 const player = new Actor();
 
@@ -124,6 +127,90 @@ movePlayer(10, 10);
 items.forEach(status);
 movePlayer(5, -5);
 items.forEach(status);
+*/
+
+
+class Level {
+  constructor(grid=[], actors=[]) {
+    this.grid = grid;
+    this.actors = actors;
+    //Level.prototype.player = 'player';
+    this.height = grid.length;
+    this.width = (grid.length !== 0) ?
+      Math.max( ...grid.map(i => i.length) ) :
+      0;
+    this.status = null;
+    this.finishDelay = 1;
+  }
+
+  isFinished() {
+    return (this.status !== null && this.finishDelay < 0) ? true : false;
+  }
+
+  actorAt(obj) {
+    try {
+      //console.log(this.actors);
+      if ( arguments.lenght === 0 ) {
+        throw new Error('Функция должна вызываться с объектом типа Actor');
+      } else if ( !(obj instanceof Actor) ) {
+        throw new Error('Движущийся объект должен быть типа Actor');
+      } else {
+        for (item of this.actors) {
+          if (obj !== item) {
+            let horizontal = (obj.right >= item.left) && (obj.left <= item.right);
+            let vertical = (obj.bottom >= item.top) && (obj.top <= item.bottom);
+            if (horizontal || vertical) {
+              return item;
+            }
+          }
+        }
+
+        return undefined;
+      }
+
+    } catch(err) {
+      console.log(err);
+    }
+  }
+}
+
+
+const grid = [
+  [undefined, undefined],
+  ['wall', 'wall']
+];
+
+function MyCoin(title) {
+  this.type = 'coin';
+  this.title = title;
+}
+MyCoin.prototype = Object.create(Actor);
+MyCoin.constructor = MyCoin;
+
+const goldCoin = new MyCoin('Золото');
+const bronzeCoin = new MyCoin('Бронза');
+const player = new Actor();
+const fireball = new Actor();
+
+const level = new Level(grid, [ goldCoin, bronzeCoin, player, fireball ]);
+
+level.playerTouched('coin', goldCoin);
+level.playerTouched('coin', bronzeCoin);
+
+if (level.noMoreActors('coin')) {
+  console.log('Все монеты собраны');
+  console.log(`Статус игры: ${level.status}`);
+}
+
+const obstacle = level.obstacleAt(new Vector(1, 1), player.size);
+if (obstacle) {
+  console.log(`На пути препятствие: ${obstacle}`);
+}
+
+const otherActor = level.actorAt(player);
+if (otherActor === fireball) {
+  console.log('Пользователь столкнулся с шаровой молнией');
+}
 
 
 /*
