@@ -172,6 +172,30 @@ class Level {
       console.log(err);
     }
   }
+
+  obstacleAt(moveTo, size) {
+    try {
+      for ( let item of [].slice(arguments) ) {
+        console.log('item', item);
+        if ( !(item instanceof Vector) ) {
+          throw new Error('Объект должен быть типа Vector');
+        }
+      }
+
+    } catch(err) {
+      console.log(err);
+    }
+  }
+
+  removeActor(obj) {
+    for ( let item of this.actors.entries() ) {
+      if (item[1] === obj) {
+        this.actors.splice(item[0], 1);
+      }
+    }
+  }
+
+  
 }
 
 
