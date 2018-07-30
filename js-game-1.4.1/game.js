@@ -134,6 +134,7 @@ class Level {
   constructor(grid=[], actors=[]) {
     this.grid = grid;
     this.actors = actors;
+    //this.type = ;
     //Level.prototype.player = 'player';
     this.height = grid.length;
     this.width = (grid.length !== 0) ?
@@ -155,7 +156,7 @@ class Level {
       } else if ( !(obj instanceof Actor) ) {
         throw new Error('Движущийся объект должен быть типа Actor');
       } else {
-        for (item of this.actors) {
+        for (let item of this.actors) {
           if (obj !== item) {
             let horizontal = (obj.right >= item.left) && (obj.left <= item.right);
             let vertical = (obj.bottom >= item.top) && (obj.top <= item.bottom);
@@ -195,7 +196,26 @@ class Level {
     }
   }
 
-  
+  noMoreActors(objType) {
+    for ( let item of this.actors ) {
+      if ( item.type === objType ) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  playerTouched(objType, actor={}) {
+    while (this.status !== null) {
+      if ( objType === 'lava' || objType === 'fireball') {
+        this.status = 'lost';
+      } else if ( objType === 'coin' && actor instanceof MyCoin ) {
+
+      }
+    }
+  }
+
 }
 
 
