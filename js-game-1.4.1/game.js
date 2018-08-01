@@ -144,6 +144,7 @@ class Level {
     this.finishDelay = 1;
   }
 
+
   isFinished() {
     return (this.status !== null && this.finishDelay < 0) ? true : false;
   }
@@ -158,14 +159,13 @@ class Level {
       } else {
         for (let item of this.actors) {
           if (obj !== item) {
-            let horizontal = (obj.right >= item.left) && (obj.left <= item.right);
-            let vertical = (obj.bottom >= item.top) && (obj.top <= item.bottom);
+            let horizontal = (obj.right > item.left) && (obj.left < item.right);
+            let vertical = (obj.bottom > item.top) && (obj.top < item.bottom);
             if (horizontal || vertical) {
               return item;
             }
           }
         }
-
         return undefined;
       }
 
@@ -180,6 +180,27 @@ class Level {
         console.log('item', item);
         if ( !(item instanceof Vector) ) {
           throw new Error('Объект должен быть типа Vector');
+        }
+      }
+
+      let isBorderWalls = (moveTo.x < 0) || (moveTo.y < 0) ||
+        ( (moveTo.x + size.x) >= this.width );
+
+      if (isBorderWalls) {
+        return 'wall';
+      } else if ( (moveTo.y + size.y) >= this.height ) {
+        return 'lava';
+      } else {
+        for (let raw of this.grid) {
+          for (let item of raw) {
+            let horizontal = (obj.right >= item.left) && (obj.left <= item.right);
+            let vertical = (obj.bottom >= item.top) && (obj.top <= item.bottom);
+            if (horizontal || vertical) {
+              return item;
+            } else {
+              return undefined;
+            }
+          }
         }
       }
 
@@ -207,18 +228,18 @@ class Level {
   }
 
   playerTouched(objType, actor={}) {
-    while (this.status !== null) {
+    if (this.status === null) {
       if ( objType === 'lava' || objType === 'fireball') {
         this.status = 'lost';
-      } else if ( objType === 'coin' && actor instanceof MyCoin ) {
-
+      } else if ( objType === 'coin' && actor instanceof Actor ) {
+        this.removeActor(actor);
+        this.status = (this.noMoreActors(objType)) ? 'won' : this.status;
       }
     }
   }
 
 }
-
-
+/*
 const grid = [
   [undefined, undefined],
   ['wall', 'wall']
@@ -255,13 +276,13 @@ const otherActor = level.actorAt(player);
 if (otherActor === fireball) {
   console.log('Пользователь столкнулся с шаровой молнией');
 }
+*/
 
 
-/*
+
 const grid = [
   new Array(3),
   ['wall', 'wall', 'lava']
 ];
 const level = new Level(grid);
 runLevel(level, DOMDisplay);
-*/

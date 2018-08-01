@@ -202,7 +202,7 @@ function initGameObjects() {
     }
   };
 
-  Player.prototype.handleObstacle = function (obstacle) {
+  Actor.prototype.handleObstacle = function (obstacle) {
     if (this.wontJump) {
       this.speed.y = -jumpSpeed;
     } else {
@@ -210,7 +210,7 @@ function initGameObjects() {
     }
   };
 
-  Player.prototype.move = function (motion, level) {
+  Actor.prototype.move = function (motion, level) {
     var newPos = this.pos.plus(motion);
     var obstacle = level.obstacleAt(newPos, this.size);
     if (obstacle) {
@@ -221,7 +221,7 @@ function initGameObjects() {
     }
   };
 
-  Player.prototype.moveX = function (step, level, keys) {
+  Actor.prototype.moveX = function (step, level, keys) {
     this.speed.x = 0;
     if (keys.left) this.speed.x -= playerXSpeed;
     if (keys.right) this.speed.x += playerXSpeed;
@@ -230,7 +230,7 @@ function initGameObjects() {
     this.move(motion, level);
   };
 
-  Player.prototype.moveY = function (step, level, keys) {
+  Actor.prototype.moveY = function (step, level, keys) {
     this.speed.y += step * gravity;
     this.wontJump = keys.up && this.speed.y > 0;
 
@@ -238,7 +238,7 @@ function initGameObjects() {
     this.move(motion, level);
   };
 
-  Player.prototype.act = function (step, level, keys) {
+  Actor.prototype.act = function (step, level, keys) {
     this.moveX(step, level, keys);
     this.moveY(step, level, keys);
 
