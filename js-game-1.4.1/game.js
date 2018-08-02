@@ -202,22 +202,17 @@ class Level {
       } else if ( (moveTo.y + size.y) >= this.height ) {
         return 'lava';
       } else {
+        let obstacles = [];
         let objAreas = getObjAreas();
-        /*
-        for (let raw of this.grid) {
-          for (let item of raw) {
-            let horizontal = (moveTo.right >= item.left) &&
-                            (moveTo.left <= item.right);
-            let vertical = (moveTo.bottom >= item.top) &&
-                            (moveTo.top <= item.bottom);
-            if (horizontal || vertical) {
-              return item;
-            } else {
-              return undefined;
-            }
+
+        for (let item of objAreas) {
+          let area = this.grid[item[1]][item[0]];
+          if ( area !== undefined ) {
+            obstacles.push(area);
           }
         }
-        */
+
+
       }
 
     } catch(err) {
