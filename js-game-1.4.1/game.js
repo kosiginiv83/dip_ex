@@ -177,13 +177,24 @@ class Level {
   obstacleAt(moveTo, size) {
     try {
       for ( let item of [].slice(arguments) ) {
-        console.log('item', item);
         if ( !(item instanceof Vector) ) {
           throw new Error('Объект должен быть типа Vector');
         }
       }
 
-      let isBorderWalls = (moveTo.x < 0) || (moveTo.y < 0) ||
+      const getObjAreas = () => {
+        let horizontal = Math.ceil(moveTo.x + size.x);
+        let vertical = Math.ceil(moveTo.y + size.y);
+        let objAreas = [];
+        for (x = Math.floor(moveTo.x); x < horizontal; x++) {
+          for (y = Math.floor(moveTo.y); y < vertical; y++) {
+            areasCoords.push(new Array(x, y));
+          }
+        }
+        return objAreas;
+      }
+
+      const isBorderWalls = (moveTo.x < 0) || (moveTo.y < 0) ||
         ( (moveTo.x + size.x) >= this.width );
 
       if (isBorderWalls) {
@@ -191,10 +202,14 @@ class Level {
       } else if ( (moveTo.y + size.y) >= this.height ) {
         return 'lava';
       } else {
+        let objAreas = getObjAreas();
+        /*
         for (let raw of this.grid) {
           for (let item of raw) {
-            let horizontal = (obj.right >= item.left) && (obj.left <= item.right);
-            let vertical = (obj.bottom >= item.top) && (obj.top <= item.bottom);
+            let horizontal = (moveTo.right >= item.left) &&
+                            (moveTo.left <= item.right);
+            let vertical = (moveTo.bottom >= item.top) &&
+                            (moveTo.top <= item.bottom);
             if (horizontal || vertical) {
               return item;
             } else {
@@ -202,6 +217,7 @@ class Level {
             }
           }
         }
+        */
       }
 
     } catch(err) {
@@ -223,7 +239,6 @@ class Level {
         return false;
       }
     }
-
     return true;
   }
 
@@ -239,7 +254,7 @@ class Level {
   }
 
 }
-/*
+
 const grid = [
   [undefined, undefined],
   ['wall', 'wall']
@@ -276,13 +291,14 @@ const otherActor = level.actorAt(player);
 if (otherActor === fireball) {
   console.log('Пользователь столкнулся с шаровой молнией');
 }
-*/
 
 
 
+/*
 const grid = [
   new Array(3),
   ['wall', 'wall', 'lava']
 ];
 const level = new Level(grid);
 runLevel(level, DOMDisplay);
+*/
