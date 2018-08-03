@@ -197,22 +197,29 @@ class Level {
       const isBorderWalls = (moveTo.x < 0) || (moveTo.y < 0) ||
         ( (moveTo.x + size.x) >= this.width );
 
-      if (isBorderWalls) {
-        return 'wall';
-      } else if ( (moveTo.y + size.y) >= this.height ) {
+      if ( (moveTo.y + size.y) >= this.height ) {
         return 'lava';
+      } else if (isBorderWalls) {
+        return 'wall';
       } else {
         let obstacles = [];
         let objAreas = getObjAreas();
 
         for (let item of objAreas) {
           let area = this.grid[item[1]][item[0]];
+          console.log(area);
           if ( area !== undefined ) {
             obstacles.push(area);
           }
         }
 
+        if (obstacles.includes('lava')) {
+          return 'lava';
+        } else if (obstacles.includes('wall')) {
+          return 'wall';
+        }
 
+        return undefined;
       }
 
     } catch(err) {
