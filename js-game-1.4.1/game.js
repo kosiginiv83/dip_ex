@@ -334,7 +334,14 @@ class LevelParser {
 
   createActors(strings) {
     let actors = [];
-
+    strings.forEach( (row, y) => {
+      row.forEach( (unit, x) => {
+        let cls = this.dictionary[unit];
+        if ( cls instanceof Actor ) {
+          actors.push( new cls(x, y) );
+        }
+      });
+    });
     return actors;
   }
 
