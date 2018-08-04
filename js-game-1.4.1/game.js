@@ -134,7 +134,7 @@ class Level {
   constructor(grid=[], actors=[]) {
     this.grid = grid;
     this.actors = actors;
-    //this.type = ;
+    //this.type = 'player';
     //Level.prototype.player = 'player';
     this.height = grid.length;
     this.width = (grid.length !== 0) ?
@@ -215,7 +215,7 @@ class Level {
 
         if (obstacles.includes('lava')) {
           return 'lava';
-        } else if (obstacles.includes('wall')) {
+        } else if ( obstacles.includes('wall') ) {
           return 'wall';
         }
 
@@ -256,7 +256,7 @@ class Level {
   }
 
 }
-
+/*
 const grid = [
   [undefined, undefined],
   ['wall', 'wall']
@@ -293,7 +293,73 @@ const otherActor = level.actorAt(player);
 if (otherActor === fireball) {
   console.log('Пользователь столкнулся с шаровой молнией');
 }
+*/
 
+
+class LevelParser {
+  constructor(dictionary) {
+    this.dictionary = dictionary;
+  }
+
+  actorFromSymbol(symbol) {
+    if (symbol) {
+      return this.dictionary[symbol];
+    }
+  }
+
+  obstacleFromSymbol(symbol) {
+    switch (symbol) {
+      case 'x':
+        return 'wall';
+        break;
+      case '!':
+        return 'lava';
+        break;
+      default:
+        return undefined;
+    }
+  }
+
+  createGrid(strings) {
+    let grid = [];
+    for (let string of strings) {
+      let row = [];
+      for (let symbol of string) {
+        row.push( this.obstacleFromSymbol(symbol) );
+      }
+      grid.push(row);
+    }
+    return grid;
+  }
+
+  createActors(strings) {
+    let actors = [];
+
+    return actors;
+  }
+
+  parse(rowsList) {
+
+  }
+}
+
+
+const plan = [
+  ' @ ',
+  'x!x'
+];
+
+const actorsDict = Object.create(null);
+actorsDict['@'] = Actor;
+
+const parser = new LevelParser(actorsDict);
+const level = parser.parse(plan);
+
+level.grid.forEach((line, y) => {
+  line.forEach((cell, x) => console.log(`(${x}:${y}) ${cell}`));
+});
+
+level.actors.forEach(actor => console.log(`(${actor.pos.x}:${actor.pos.y}) ${actor.type}`));
 
 
 /*
