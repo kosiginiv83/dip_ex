@@ -144,14 +144,13 @@ class Level {
     this.finishDelay = 1;
   }
 
-
   isFinished() {
     return (this.status !== null && this.finishDelay < 0) ? true : false;
   }
 
   actorAt(obj) {
     try {
-      //console.log(this.actors);
+//console.log(this.actors);
       if ( arguments.lenght === 0 ) {
         throw new Error('Функция должна вызываться с объектом типа Actor');
       } else if ( !(obj instanceof Actor) ) {
@@ -217,9 +216,9 @@ console.log(area);
           return 'lava';
         } else if ( obstacles.includes('wall') ) {
           return 'wall';
+        } else {
+          return undefined;
         }
-
-        return undefined;
       }
 
     } catch(err) {
@@ -293,6 +292,15 @@ const otherActor = level.actorAt(player);
 if (otherActor === fireball) {
   console.log('Пользователь столкнулся с шаровой молнией');
 }
+*/
+
+/*
+const grid = [
+  new Array(3),
+  ['wall', 'wall', 'lava']
+];
+const level = new Level(grid);
+runLevel(level, DOMDisplay);
 */
 
 
@@ -370,13 +378,3 @@ level.grid.forEach((line, y) => {
 });
 
 level.actors.forEach(actor => console.log(`(${actor.pos.x}:${actor.pos.y}) ${actor.type}`));
-
-
-/*
-const grid = [
-  new Array(3),
-  ['wall', 'wall', 'lava']
-];
-const level = new Level(grid);
-runLevel(level, DOMDisplay);
-*/
