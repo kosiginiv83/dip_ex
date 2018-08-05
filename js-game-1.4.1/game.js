@@ -186,9 +186,9 @@ class Level {
         let horizontal = Math.ceil(moveTo.x + size.x);
         let vertical = Math.ceil(moveTo.y + size.y);
         let objAreas = [];
-        for (x = Math.floor(moveTo.x); x < horizontal; x++) {
-          for (y = Math.floor(moveTo.y); y < vertical; y++) {
-            areasCoords.push(new Array(x, y));
+        for (let x = Math.floor(moveTo.x); x < horizontal; x++) {
+          for (let y = Math.floor(moveTo.y); y < vertical; y++) {
+            objAreas.push(new Array(x, y));
           }
         }
         return objAreas;
@@ -207,7 +207,7 @@ class Level {
 
         for (let item of objAreas) {
           let area = this.grid[item[1]][item[0]];
-          console.log(area);
+console.log(area);
           if ( area !== undefined ) {
             obstacles.push(area);
           }
@@ -333,10 +333,12 @@ class LevelParser {
   }
 
   createActors(strings) {
+    let x, y, row, unit;
     let actors = [];
     strings.forEach( (row, y) => {
       row.forEach( (unit, x) => {
         let cls = this.dictionary[unit];
+console.log(cls);
         if ( cls instanceof Actor ) {
           actors.push( new cls(x, y) );
         }
@@ -346,7 +348,8 @@ class LevelParser {
   }
 
   parse(rowsList) {
-
+    this.grid = this.createGrid(rowsList);
+    this.actors = this.createActors(rowsList);
   }
 }
 
