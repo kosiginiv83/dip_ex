@@ -8,15 +8,10 @@ class Vector {
   }
 
   plus(obj) {
-    try {
-      if ( obj instanceof Vector ) {
-        return new Vector( this.x + obj.x, this.y + obj.y );
-      } else {
-        throw new Error('Можно прибавлять к вектору только вектор типа Vector');
-      }
-
-    } catch(err) {
-      console.log(err);
+    if (obj instanceof Vector) {
+      return new Vector(this.x + obj.x, this.y + obj.y);
+    } else {
+      throw new Error('Можно прибавлять к вектору только вектор типа Vector');
     }
   }
 
@@ -37,19 +32,14 @@ console.log(`Текущее расположение: ${finish.x}:${finish.y}`);
 class Actor {
   constructor( pos=new Vector(0, 0), size=new Vector(1, 1),
               speed=new Vector(0, 0) ) {
-    try {
-      this.pos = pos;
-      this.size = size;
-      this.speed = speed;
+    this.pos = pos;
+    this.size = size;
+    this.speed = speed;
 
-      for (let key in this) {
-        if ( !(this[key] instanceof Vector) ) {
-          throw new Error('Объект должен быть типа Vector');
-        }
+    for (let key in this) {
+      if ( !(this[key] instanceof Vector) ) {
+        throw new Error('Объект должен быть типа Vector');
       }
-
-    } catch(err) {
-      console.log(err);
     }
   }
 
@@ -78,22 +68,17 @@ class Actor {
   }
 
   isIntersect(obj) {
-    try {
-      if ( arguments.lenght === 0 ) {
-        throw new Error('Функция должна вызываться с объектом типа Actor');
-      } else if ( !(obj instanceof Actor) ) {
-        throw new Error('Движущийся объект должен быть типа Actor');
-      } else if ( this === obj ) {
-        return false;
-      } else {
-        let horizontal = (obj.right >= this.left) && (obj.left <= this.right);
-        let vertical = (obj.bottom >= this.top) && (obj.top <= this.bottom);
+    if ( arguments.lenght === 0 ) {
+      throw new Error('Функция должна вызываться с объектом типа Actor');
+    } else if ( !(obj instanceof Actor) ) {
+      throw new Error('Движущийся объект должен быть типа Actor');
+    } else if ( this === obj ) {
+      return false;
+    } else {
+      let horizontal = (obj.right >= this.left) && (obj.left <= this.right);
+      let vertical = (obj.bottom >= this.top) && (obj.top <= this.bottom);
 
-        return (horizontal || vertical) ? true : false;
-      }
-
-    } catch(err) {
-      console.log(err);
+      return (horizontal || vertical) ? true : false;
     }
   }
 }
@@ -149,27 +134,22 @@ class Level {
   }
 
   actorAt(obj) {
-    try {
 //console.log(this.actors);
-      if ( arguments.lenght === 0 ) {
-        throw new Error('Функция должна вызываться с объектом типа Actor');
-      } else if ( !(obj instanceof Actor) ) {
-        throw new Error('Движущийся объект должен быть типа Actor');
-      } else {
-        for (let item of this.actors) {
-          if (obj !== item) {
-            let horizontal = (obj.right > item.left) && (obj.left < item.right);
-            let vertical = (obj.bottom > item.top) && (obj.top < item.bottom);
-            if (horizontal || vertical) {
-              return item;
-            }
+    if ( arguments.lenght === 0 ) {
+      throw new Error('Функция должна вызываться с объектом типа Actor');
+    } else if ( !(obj instanceof Actor) ) {
+      throw new Error('Движущийся объект должен быть типа Actor');
+    } else {
+      for (let item of this.actors) {
+        if (obj !== item) {
+          let horizontal = (obj.right > item.left) && (obj.left < item.right);
+          let vertical = (obj.bottom > item.top) && (obj.top < item.bottom);
+          if (horizontal || vertical) {
+            return item;
           }
         }
-        return undefined;
       }
-
-    } catch(err) {
-      console.log(err);
+      return undefined;
     }
   }
 
@@ -205,14 +185,14 @@ class Level {
         let objAreas = getObjAreas();
 
         for (let item of objAreas) {
-          let area = this.grid[item[1]][item[0]];
-console.log(area);
+          let area = this.grid[ item[1] ][ item[0] ];
+//console.log(area);
           if ( area !== undefined ) {
             obstacles.push(area);
           }
         }
 
-        if (obstacles.includes('lava')) {
+        if ( obstacles.includes('lava') ) {
           return 'lava';
         } else if ( obstacles.includes('wall') ) {
           return 'wall';
@@ -235,8 +215,8 @@ console.log(area);
   }
 
   noMoreActors(objType) {
-    for ( let item of this.actors ) {
-      if ( item.type === objType ) {
+    for (let item of this.actors) {
+      if (item.type === objType) {
         return false;
       }
     }
@@ -245,11 +225,11 @@ console.log(area);
 
   playerTouched(objType, actor={}) {
     if (this.status === null) {
-      if ( objType === 'lava' || objType === 'fireball') {
+      if (objType === 'lava' || objType === 'fireball') {
         this.status = 'lost';
-      } else if ( objType === 'coin' && actor instanceof Actor ) {
+      } else if (objType === 'coin' && actor instanceof Actor) {
         this.removeActor(actor);
-        this.status = (this.noMoreActors(objType)) ? 'won' : this.status;
+        this.status = ( this.noMoreActors(objType) ) ? 'won' : this.status;
       }
     }
   }
@@ -341,17 +321,17 @@ class LevelParser {
   }
 
   createActors(strings) {
-    let x, y, row, unit;
     let actors = [];
-    strings.forEach( (row, y) => {
-      row.forEach( (unit, x) => {
-        let cls = this.dictionary[unit];
-console.log(cls);
+    for ( let [rowIndex, string] of strings.entries() ) {
+      for (let cellIndex = 0; cellIndex < string.length; cellIndex++) {
+        let cls = this.actorFromSymbol(string[cellIndex]);
+//console.log('cls', cls);
         if ( cls instanceof Actor ) {
-          actors.push( new cls(x, y) );
+          actors.push( new cls(cellIndex, rowIndex) );
         }
-      });
-    });
+      }
+    }
+console.log('\t\tactors', actors);
     return actors;
   }
 
@@ -361,7 +341,7 @@ console.log(cls);
   }
 }
 
-
+/*
 const plan = [
   ' @ ',
   'x!x'
@@ -378,3 +358,4 @@ level.grid.forEach((line, y) => {
 });
 
 level.actors.forEach(actor => console.log(`(${actor.pos.x}:${actor.pos.y}) ${actor.type}`));
+*/
