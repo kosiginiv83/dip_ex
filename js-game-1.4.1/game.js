@@ -128,7 +128,11 @@ class Level {
     this.status = null;
     this.finishDelay = 1;
   }
-
+  /*
+  static set status(stts) {
+    this.status = stts;
+  }
+  */
   isFinished() {
     return (this.status !== null && this.finishDelay < 0) ? true : false;
   }
@@ -154,55 +158,50 @@ class Level {
   }
 
   obstacleAt(moveTo, size) {
-    try {
-      for ( let item of [].slice(arguments) ) {
-        if ( !(item instanceof Vector) ) {
-          throw new Error('Объект должен быть типа Vector');
+    for ( let item of [].slice(arguments) ) {
+      if ( !(item instanceof Vector) ) {
+        throw new Error('Объект должен быть типа Vector');
+      }
+    }
+
+    const getObjAreas = () => {
+      let horizontal = Math.ceil(moveTo.x + size.x);
+      let vertical = Math.ceil(moveTo.y + size.y);
+      let objAreas = [];
+      for (let x = Math.floor(moveTo.x); x < horizontal; x++) {
+        for (let y = Math.floor(moveTo.y); y < vertical; y++) {
+          objAreas.push(new Array(x, y));
+        }
+      }
+      return objAreas;
+    }
+
+    const isBorderWalls = (moveTo.x < 0) || (moveTo.y < 0) ||
+      ( (moveTo.x + size.x) >= this.width );
+
+    if ( (moveTo.y + size.y) >= this.height ) {
+      return 'lava';
+    } else if (isBorderWalls) {
+      return 'wall';
+    } else {
+      let obstacles = [];
+      let objAreas = getObjAreas();
+
+      for (let item of objAreas) {
+        let area = this.grid[ item[1] ][ item[0] ];
+//console.log(area);
+        if ( area !== undefined ) {
+          obstacles.push(area);
         }
       }
 
-      const getObjAreas = () => {
-        let horizontal = Math.ceil(moveTo.x + size.x);
-        let vertical = Math.ceil(moveTo.y + size.y);
-        let objAreas = [];
-        for (let x = Math.floor(moveTo.x); x < horizontal; x++) {
-          for (let y = Math.floor(moveTo.y); y < vertical; y++) {
-            objAreas.push(new Array(x, y));
-          }
-        }
-        return objAreas;
-      }
-
-      const isBorderWalls = (moveTo.x < 0) || (moveTo.y < 0) ||
-        ( (moveTo.x + size.x) >= this.width );
-
-      if ( (moveTo.y + size.y) >= this.height ) {
+      if ( obstacles.includes('lava') ) {
         return 'lava';
-      } else if (isBorderWalls) {
+      } else if ( obstacles.includes('wall') ) {
         return 'wall';
       } else {
-        let obstacles = [];
-        let objAreas = getObjAreas();
-
-        for (let item of objAreas) {
-          let area = this.grid[ item[1] ][ item[0] ];
-//console.log(area);
-          if ( area !== undefined ) {
-            obstacles.push(area);
-          }
-        }
-
-        if ( obstacles.includes('lava') ) {
-          return 'lava';
-        } else if ( obstacles.includes('wall') ) {
-          return 'wall';
-        } else {
-          return undefined;
-        }
+        return undefined;
       }
-
-    } catch(err) {
-      console.log(err);
     }
   }
 
@@ -376,4 +375,36 @@ class Fireball extends Actor {
   getNextPosition(time=1) {
     return this.speed.times(time).plus(this.pos);
   }
+
+  handleObstacle() {
+    this.speed = this.speed.times(-1);
+  }
+
+  act(time, level) {
+    let nextPos = this.getNextPosition(time);
+    let obstacle = this.obstacleAt(nextPos, this.size);
+
+    switch (obstacle) {
+      case undefined:
+        this.pos = nextPos;
+        break;
+      case 'lava':
+        level.status = 'lose';
+        break;
+      default:
+        this.pos = this.pos;
+    }
+  }
 }
+
+const time = 5;
+const speed = new Vector(1, 0);
+const position = new Vector(5, 5);
+
+const ball = new Fireball(position, speed);
+
+const nextPosition = ball.getNextPosition(time);
+console.log(`Новая позиция: ${nextPosition.x}: ${nextPosition.y}`);
+
+ball.handleObstacle();
+console.log(`Текущая скорость: ${ball.speed.x}: ${ball.speed.y}`);
