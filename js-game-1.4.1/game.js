@@ -338,9 +338,9 @@ console.log('\t\tactors', actors);
   parse(rowsList) {
     this.grid = this.createGrid(rowsList);
     this.actors = this.createActors(rowsList);
+    return this;
   }
 }
-
 /*
 const plan = [
   ' @ ',
@@ -359,3 +359,21 @@ level.grid.forEach((line, y) => {
 
 level.actors.forEach(actor => console.log(`(${actor.pos.x}:${actor.pos.y}) ${actor.type}`));
 */
+
+
+class Fireball extends Actor {
+  constructor( pos=new Vector(0, 0), speed=new Vector(0, 0) ) {
+    super();
+    this.pos = pos;
+    this.speed = speed;
+    this.size = new Vector(1, 1);
+  }
+
+  get type() {
+    return 'fireball';
+  }
+
+  getNextPosition(time=1) {
+    return this.speed.times(time).plus(this.pos);
+  }
+}
