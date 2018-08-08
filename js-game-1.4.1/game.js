@@ -457,14 +457,15 @@ class Coin extends Actor {
   }
 
   getSpringVector() {
-
+    return new Vector(0, Math.sin(this.spring) * this.springDist);
   }
 
-  getNextPosition() {
-
+  getNextPosition(time=1) {
+    this.updateSpring(time);
+    return this.getSpringVector();
   }
 
-  act() {
+  act(time) {
 
   }
 }
