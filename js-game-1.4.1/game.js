@@ -435,18 +435,37 @@ class FireRain extends Fireball {
 class Coin extends Actor {
   constructor(position) {
     super();
-console.log('position', position);
-    this.pos = position.plus( new Vector(0.2, 0.1) );
-console.log('this.pos', this.pos);
+    //this.pos = position.plus( new Vector(0.2, 0.1) );
     this.size = new Vector(0.6, 0.6);
-console.log('this.size', this.size);
-console.log('this instanceof Actor', this instanceof Actor);
-console.log('this.type', this.type);
+    this.springSpeed = 8;
+    this.springDist = 0.07;
+    this.spring = Math.random() * 2*Math.PI;
+//console.log('position', position);
+//console.log('this.pos', this.pos);
+//console.log('this.size', this.size);
+//console.log('this instanceof Actor', this instanceof Actor);
+//console.log('this.type', this.type);
 //console.log('this', this);
   }
 
   get type() {
     return 'coin';
+  }
+
+  updateSpring(time=1) {
+    this.spring = this.spring + this.springSpeed * time;
+  }
+
+  getSpringVector() {
+
+  }
+
+  getNextPosition() {
+
+  }
+
+  act() {
+
   }
 }
 
