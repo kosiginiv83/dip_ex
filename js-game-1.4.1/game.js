@@ -280,7 +280,11 @@ class LevelParser {
   }
 
   actorFromSymbol(symbol) {
-    if (symbol) {
+    if (symbol && symbol in this.dictionary) {
+//console.log('this.dictionary[symbol]', this.dictionary[symbol].name);
+//console.log('this.dictionary', this.dictionary);
+      //return new this.dictionary[symbol]();
+      //return (cls) ? cls : undefined;
       return this.dictionary[symbol];
     }
   }
@@ -314,10 +318,16 @@ class LevelParser {
     let actors = [];
     for ( let [rowIndex, string] of strings.entries() ) {
       for (let cellIndex = 0; cellIndex < string.length; cellIndex++) {
-        let cls = this.actorFromSymbol(string[cellIndex]);
-//console.log('cls', cls);
-        if ( cls instanceof Actor ) {
-          actors.push( new cls(cellIndex, rowIndex) );
+        let obj = this.actorFromSymbol(string[cellIndex]);
+console.log('obj1', obj);
+
+        if (obj && obj instanceof Actor) {
+console.log('obj2', obj);
+console.log('obj.name instanceof Actor', obj.name instanceof Actor);
+
+          //actors.push( new cls(cellIndex, rowIndex) );
+          //actors.push( new cls( new Vector(cellIndex, rowIndex) )() );
+          actors.push(obj);
         }
       }
     }
@@ -331,7 +341,7 @@ console.log('\t\tactors', actors);
     return this;
   }
 }
-/*
+
 const plan = [
   ' @ ',
   'x!x'
@@ -348,11 +358,12 @@ level.grid.forEach((line, y) => {
 });
 
 level.actors.forEach(actor => console.log(`(${actor.pos.x}:${actor.pos.y}) ${actor.type}`));
-*/
+
 
 
 class Fireball extends Actor {
-  constructor( pos=new Vector(0, 0), speed=new Vector(0, 0) ) {
+  //constructor( pos=new Vector(0, 0), speed=new Vector(0, 0) ) {
+  constructor(pos, speed) {
     super();
     this.pos = pos;
     this.speed = speed;
@@ -419,15 +430,15 @@ class VerticalFireball extends Fireball {
 
 
 class FireRain extends Fireball {
-  constructor() {
+  constructor(position) {
     super();
     this.speed = new Vector(0, 3);
-    this.initPos = Object.create(this.pos);
+    this.pos = position;
+    this.initPos = this.pos;
   }
 
   handleObstacle() {
-    //delete this;
-    new FireRain(this.initPos);
+    this.pos = this.initPos;
   }
 }
 
