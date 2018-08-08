@@ -273,15 +273,6 @@ if (otherActor === fireball) {
 }
 */
 
-/*
-const grid = [
-  new Array(3),
-  ['wall', 'wall', 'lava']
-];
-const level = new Level(grid);
-runLevel(level, DOMDisplay);
-*/
-
 
 class LevelParser {
   constructor(dictionary) {
@@ -382,21 +373,21 @@ class Fireball extends Actor {
 
   act(time, level) {
     let nextPos = this.getNextPosition(time);
-    let obstacle = this.obstacleAt(nextPos, this.size);
+    let obstacle = level.obstacleAt(nextPos, this.size);
 
     switch (obstacle) {
       case undefined:
         this.pos = nextPos;
         break;
       case 'lava':
-        level.status = 'lose';
+        level.status = 'lost';
         break;
       default:
-        this.pos = this.pos;
+        this.handleObstacle();
     }
   }
 }
-
+/*
 const time = 5;
 const speed = new Vector(1, 0);
 const position = new Vector(5, 5);
@@ -408,3 +399,135 @@ console.log(`Новая позиция: ${nextPosition.x}: ${nextPosition.y}`);
 
 ball.handleObstacle();
 console.log(`Текущая скорость: ${ball.speed.x}: ${ball.speed.y}`);
+*/
+
+
+class HorizontalFireball extends Fireball {
+  constructor() {
+    super();
+    this.speed = new Vector(2, 0);
+  }
+}
+
+
+class VerticalFireball extends Fireball {
+  constructor() {
+    super();
+    this.speed = new Vector(0, 2);
+  }
+}
+
+
+
+
+/*
+const grid = [
+  new Array(3),
+  ['wall', 'wall', 'lava']
+];
+const level = new Level(grid);
+runLevel(level, DOMDisplay);
+*/
+/*
+const schema = [
+  '         ',
+  '         ',
+  '         ',
+  '         ',
+  '     !xxx',
+  '         ',
+  'xxx!     ',
+  '         '
+];
+const parser = new LevelParser();
+const level = parser.parse(schema);
+runLevel(level, DOMDisplay);
+*/
+/*
+const schema = [
+  '         ',
+  '         ',
+  '         ',
+  '         ',
+  '     !xxx',
+  ' @       ',
+  'xxx!     ',
+  '         '
+];
+const actorDict = {
+  '@': Player
+}
+const parser = new LevelParser(actorDict);
+const level = parser.parse(schema);
+runLevel(level, DOMDisplay);
+*/
+/*
+const schema = [
+  '         ',
+  '         ',
+  '    =    ',
+  '         ',
+  '     !xxx',
+  ' @       ',
+  'xxx!     ',
+  '         '
+];
+const actorDict = {
+  '@': Player,
+  '=': HorizontalFireball
+}
+const parser = new LevelParser(actorDict);
+const level = parser.parse(schema);
+DOMDisplay(document.body, level);
+*/
+/*
+const schema = [
+  '         ',
+  '         ',
+  '    =    ',
+  '       o ',
+  '     !xxx',
+  ' @       ',
+  'xxx!     ',
+  '         '
+];
+const actorDict = {
+  '@': Player,
+  '=': HorizontalFireball
+}
+const parser = new LevelParser(actorDict);
+const level = parser.parse(schema);
+runLevel(level, DOMDisplay)
+  .then(status => console.log(`Игрок ${status}`));
+*/
+/*
+const schemas = [
+  [
+    '         ',
+    '         ',
+    '    =    ',
+    '       o ',
+    '     !xxx',
+    ' @       ',
+    'xxx!     ',
+    '         '
+  ],
+  [
+    '      v  ',
+    '    v    ',
+    '  v      ',
+    '        o',
+    '        x',
+    '@   x    ',
+    'x        ',
+    '         '
+  ]
+];
+const actorDict = {
+  '@': Player,
+  'v': FireRain
+}
+const parser = new LevelParser(actorDict);
+runGame(schemas, parser, DOMDisplay)
+  .then(() => console.log('Вы выиграли приз!'));
+*/
