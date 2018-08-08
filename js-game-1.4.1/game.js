@@ -418,6 +418,39 @@ class VerticalFireball extends Fireball {
 }
 
 
+class FireRain extends Fireball {
+  constructor() {
+    super();
+    this.speed = new Vector(0, 3);
+    this.initPos = Object.create(this.pos);
+  }
+
+  handleObstacle() {
+    //delete this;
+    new FireRain(this.initPos);
+  }
+}
+
+
+class Coin extends Actor {
+  constructor(position) {
+    super();
+console.log('position', position);
+    this.pos = position.plus( new Vector(0.2, 0.1) );
+console.log('this.pos', this.pos);
+    this.size = new Vector(0.6, 0.6);
+console.log('this.size', this.size);
+console.log('this instanceof Actor', this instanceof Actor);
+console.log('this.type', this.type);
+//console.log('this', this);
+  }
+
+  get type() {
+    return 'coin';
+  }
+}
+
+
 
 
 /*
