@@ -277,11 +277,18 @@ if (otherActor === fireball) {
 class LevelParser {
   constructor(dictionary) {
     this.dictionary = dictionary;
+//console.log('dictionary', dictionary);
   }
 
-  actorFromSymbol(symbol) {
-    if (symbol && symbol in this.dictionary) {
-      return this.dictionary[symbol];
+  actorFromSymbol(symbol=undefined) {
+    if (symbol && this.dictionary) {
+      const isInDict = symbol in this.dictionary;
+      const isFunction = (typeof this.dictionary[symbol]) === 'function';
+      if (isInDict && isFunction) {
+        return this.dictionary[symbol];
+      }
+    } else {
+      return undefined;
     }
   }
 
@@ -312,6 +319,7 @@ class LevelParser {
 
   createActors(strings) {
     let actors = [];
+//console.log('+++++++++++++++++++++++++++++++++++');
     for ( let [rowIndex, string] of strings.entries() ) {
       for (let cellIndex = 0; cellIndex < string.length; cellIndex++) {
         let cls = this.actorFromSymbol(string[cellIndex]);
@@ -319,14 +327,14 @@ class LevelParser {
         if (cls) {
           let obj = new cls( new Vector(cellIndex, rowIndex) );
           if (obj instanceof Actor) {
-//console.log('obj', obj);
+//console.log(`obj`, obj);
             actors.push(obj);
           }
         }
       }
     }
-console.log('\t\tactors', actors);
-    return actors;
+//console.log('\t\tactors', actors);
+    return (actors.length > 0) ? actors : [];
   }
 
   parse(rowsList) {
@@ -335,7 +343,7 @@ console.log('\t\tactors', actors);
     return this;
   }
 }
-
+/*
 const plan = [
   ' @ ',
   'x!x'
@@ -352,7 +360,7 @@ level.grid.forEach((line, y) => {
 });
 
 level.actors.forEach(actor => console.log(`(${actor.pos.x}:${actor.pos.y}) ${actor.type}`));
-
+*/
 
 
 class Fireball extends Actor {
