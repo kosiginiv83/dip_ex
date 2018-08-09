@@ -281,10 +281,6 @@ class LevelParser {
 
   actorFromSymbol(symbol) {
     if (symbol && symbol in this.dictionary) {
-//console.log('this.dictionary[symbol]', this.dictionary[symbol].name);
-//console.log('this.dictionary', this.dictionary);
-      //return new this.dictionary[symbol]();
-      //return (cls) ? cls : undefined;
       return this.dictionary[symbol];
     }
   }
@@ -318,16 +314,14 @@ class LevelParser {
     let actors = [];
     for ( let [rowIndex, string] of strings.entries() ) {
       for (let cellIndex = 0; cellIndex < string.length; cellIndex++) {
-        let obj = this.actorFromSymbol(string[cellIndex]);
-console.log('obj1', obj);
-
-        if (obj && obj instanceof Actor) {
-console.log('obj2', obj);
-console.log('obj.name instanceof Actor', obj.name instanceof Actor);
-
-          //actors.push( new cls(cellIndex, rowIndex) );
-          //actors.push( new cls( new Vector(cellIndex, rowIndex) )() );
-          actors.push(obj);
+        let cls = this.actorFromSymbol(string[cellIndex]);
+//console.log('cls', cls);
+        if (cls) {
+          let obj = new cls( new Vector(cellIndex, rowIndex) );
+          if (obj instanceof Actor) {
+//console.log('obj', obj);
+            actors.push(obj);
+          }
         }
       }
     }
