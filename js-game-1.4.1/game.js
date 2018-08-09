@@ -43,9 +43,7 @@ class Actor {
     }
   }
 
-  act() {
-
-  }
+  act() {}
 
   get left() {
     return this.pos.x;
@@ -68,15 +66,15 @@ class Actor {
   }
 
   isIntersect(obj) {
-    if ( arguments.lenght === 0 ) {
+    if (arguments.lenght === 0) {
       throw new Error('Функция должна вызываться с объектом типа Actor');
     } else if ( !(obj instanceof Actor) ) {
       throw new Error('Движущийся объект должен быть типа Actor');
-    } else if ( this === obj ) {
+    } else if (this === obj) {
       return false;
     } else {
-      let horizontal = (obj.right >= this.left) && (obj.left <= this.right);
-      let vertical = (obj.bottom >= this.top) && (obj.top <= this.bottom);
+      let horizontal = (obj.right > this.left + 1) && (obj.left < this.right - 1);
+      let vertical = (obj.bottom > this.top + 1) && (obj.top < this.bottom - 1);
 
       return (horizontal || vertical) ? true : false;
     }
@@ -119,8 +117,7 @@ class Level {
   constructor(grid=[], actors=[]) {
     this.grid = grid;
     this.actors = actors;
-    //this.type = 'player';
-    //Level.prototype.player = 'player';
+    this.player = this.actors[0];
     this.height = grid.length;
     this.width = (grid.length !== 0) ?
       Math.max( ...grid.map(i => i.length) ) :
@@ -128,11 +125,7 @@ class Level {
     this.status = null;
     this.finishDelay = 1;
   }
-  /*
-  static set status(stts) {
-    this.status = stts;
-  }
-  */
+
   isFinished() {
     return (this.status !== null && this.finishDelay < 0) ? true : false;
   }
@@ -338,9 +331,8 @@ class LevelParser {
   }
 
   parse(rowsList) {
-    let level = new Level( this.createGrid(rowsList),
-                          this.createActors(rowsList) );
-    return level;
+    return new Level( this.createGrid(rowsList),
+                      this.createActors(rowsList) );
   }
 }
 /*
