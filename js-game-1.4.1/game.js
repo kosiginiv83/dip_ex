@@ -338,9 +338,9 @@ class LevelParser {
   }
 
   parse(rowsList) {
-    this.grid = this.createGrid(rowsList);
-    this.actors = this.createActors(rowsList);
-    return this;
+    let level = new Level( this.createGrid(rowsList),
+                          this.createActors(rowsList) );
+    return level;
   }
 }
 /*
