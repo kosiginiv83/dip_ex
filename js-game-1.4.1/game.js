@@ -366,3 +366,27 @@ class Player extends Actor {
     return 'player';
   }
 }
+
+
+
+let levelsStr = loadLevels();
+
+levelsStr.then( (value) => {
+  let levels = JSON.parse(value);
+
+  const dictionary = {
+    '@': Player,
+    'o': Coin,
+    '=': HorizontalFireball,
+    '|': VerticalFireball,
+    'v': FireRain
+  };
+
+  let parser = new LevelParser(dictionary);
+  let display = DOMDisplay;
+  runGame(levels, parser, display).then( () => {alert('Вы выиграли!')} );
+});
+
+
+//function runLevel(level, Display)
+//var display = new Display(document.body, level);
