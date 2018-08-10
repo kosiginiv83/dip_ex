@@ -384,9 +384,110 @@ levelsStr.then( (value) => {
 
   let parser = new LevelParser(dictionary);
   let display = DOMDisplay;
-  runGame(levels, parser, display).then( () => {alert('Вы выиграли!')} );
+  //runLevel(levels[0], DOMDisplay)
+  runGame(levels, parser, display).then( () => alert('Вы выиграли!') );
 });
+
+
+
+
+
+
+
+/*
+const schemas = [
+  [
+    '         ',
+    '         ',
+    '    =    ',
+    '       o ',
+    '     !xxx',
+    ' @       ',
+    'xxx!     ',
+    '         '
+  ],
+  [
+    '      v  ',
+    '    v    ',
+    '  v      ',
+    '        o',
+    '        x',
+    '@   x    ',
+    'x        ',
+    '         '
+  ]
+];
+const actorDict = {
+  '@': Player,
+  'o': Coin,
+  '=': HorizontalFireball,
+  '|': VerticalFireball,
+  'v': FireRain
+}
+const parser = new LevelParser(actorDict);
+runGame(schemas, parser, DOMDisplay)
+  .then(() => console.log('Вы выиграли приз!'));
+*/
+
+
+
 
 
 //function runLevel(level, Display)
 //var display = new Display(document.body, level);
+
+
+/*
+app.js:67 Uncaught (in promise) TypeError: Cannot read property 'x' of undefined
+    at DOMDisplay.updateActor (app.js:67)
+    at DOMDisplay.updateActors (app.js:83)
+    at DOMDisplay.drawFrame (app.js:92)
+    at new DOMDisplay (app.js:44)
+    at done (app.js:165)
+    at new Promise (<anonymous>)
+    at runLevel (app.js:163)
+    at startLevel (app.js:255)
+    at done (app.js:266)
+    at new Promise (<anonymous>)
+*/
+
+
+/*
+this Player {pos: Vector, size: Vector, speed: Vector}
+game.js:34 this[key] Vector {x: 0, y: 0}
+game.js:35 !(this[key] instanceof Vector) false
+game.js:32 =========================
+game.js:33 this Player {pos: Vector, size: Vector, speed: Vector}
+game.js:34 this[key] ƒ (obstacle) {
+    if (this.wontJump) {
+      this.speed.y = -jumpSpeed;
+    } else {
+      this.speed.y = 0;
+    }
+  }
+game.js:35 !(this[key] instanceof Vector) true
+app.js:50 Uncaught (in promise) TypeError: Cannot read property 'forEach' of undefined
+    at DOMDisplay.drawBackground (app.js:50)
+    at new DOMDisplay (app.js:42)
+    at done (app.js:165)
+    at new Promise (<anonymous>)
+    at runLevel (app.js:163)
+    at levelsStr.then (game.js:391)
+drawBackground @ app.js:50
+DOMDisplay @ app.js:42
+done @ app.js:165
+runLevel @ app.js:163
+levelsStr.then @ game.js:391
+Promise.then (async)
+(anonymous) @ game.js:378
+game.js:37 Uncaught (in promise) Error: Объект должен быть типа Vector
+    at new Actor (game.js:37)
+    at new Player (game.js:364)
+    at LevelParser.createActors (game.js:243)
+    at LevelParser.parse (game.js:255)
+    at startLevel (app.js:255)
+    at done (app.js:266)
+    at new Promise (<anonymous>)
+    at runGame (app.js:253)
+    at levelsStr.then (game.js:392)
+*/
