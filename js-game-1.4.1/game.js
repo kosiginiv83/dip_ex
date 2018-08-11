@@ -65,10 +65,12 @@ class Actor {
     } else if (this === obj) {
       return false;
     } else {
-      let horizontal = (obj.right > this.left + 1) && (obj.left < this.right - 1);
-      let vertical = (obj.bottom > this.top + 1) && (obj.top < this.bottom - 1);
+      let horizontal = (obj.right > this.left) && (obj.left < this.right);
+      let vertical = (obj.bottom > this.top) && (obj.top < this.bottom);
+      let fullIntersect = ( (obj.right === this.right) && (obj.left === this.left)  &&
+                           (obj.top === this.top) && (obj.bottom === this.bottom) );
 
-      return (horizontal || vertical) ? true : false;
+      return ( (horizontal && vertical) || fullIntersect ) ? true : false;
     }
   }
 }
@@ -78,7 +80,8 @@ class Level {
   constructor(grid=[], actors=[]) {
     this.grid = grid;
     this.actors = actors;
-    this.player = this.actors[0];
+    this.player = actors.filter( item => item.type === 'player' )[0];
+console.log('this.player', this.player);
     this.height = grid.length;
     this.width = (grid.length !== 0) ?
       Math.max( ...grid.map(i => i.length) ) :
@@ -101,7 +104,11 @@ class Level {
         if (obj !== item) {
           let horizontal = (obj.right > item.left) && (obj.left < item.right);
           let vertical = (obj.bottom > item.top) && (obj.top < item.bottom);
-          if (horizontal || vertical) {
+          let fullIntersect = (obj.right === item.right) &&
+                              (obj.left === item.left) &&
+                              (obj.top === item.top) &&
+                              (obj.bottom === item.bottom);
+          if ( (horizontal && vertical) || fullIntersect ) {
             return item;
           }
         }
@@ -368,7 +375,7 @@ class Player extends Actor {
 }
 
 
-
+/*
 let levelsStr = loadLevels();
 
 levelsStr.then( (value) => {
@@ -387,10 +394,45 @@ levelsStr.then( (value) => {
   //runLevel(levels[0], DOMDisplay)
   runGame(levels, parser, display).then( () => alert('Вы выиграли!') );
 });
+*/
 
 
+const grid = [
+  [undefined, undefined],
+  ['wall', 'wall']
+];
 
+function MyCoin(title) {
+  this.type = 'coin';
+  this.title = title;
+}
+MyCoin.prototype = Object.create(Actor);
+MyCoin.constructor = MyCoin;
 
+const goldCoin = new MyCoin('Золото');
+const bronzeCoin = new MyCoin('Бронза');
+const player = new Player();
+const fireball = new Actor();
+
+const level = new Level(grid, [ goldCoin, bronzeCoin, player, fireball ]);
+
+level.playerTouched('coin', goldCoin);
+level.playerTouched('coin', bronzeCoin);
+
+if (level.noMoreActors('coin')) {
+  console.log('Все монеты собраны');
+  console.log(`Статус игры: ${level.status}`);
+}
+
+const obstacle = level.obstacleAt(new Vector(1, 1), player.size);
+if (obstacle) {
+  console.log(`На пути препятствие: ${obstacle}`);
+}
+
+const otherActor = level.actorAt(player);
+if (otherActor === fireball) {
+  console.log('Пользователь столкнулся с шаровой молнией');
+}
 
 
 
