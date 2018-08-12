@@ -29,29 +29,13 @@ class Actor {
     this.size = size;
     this.speed = speed;
 
-    for (let key in this) {
-      if ( !(this[key] instanceof Vector) && (typeof key !== 'string')  ) {
+    for (let item of [this.pos, this.size, this.speed]) {
+      if ( !(item instanceof Vector) ) {
         throw new Error('Объект должен быть типа Vector');
       }
     }
   }
-  /*
-  constructor(pos, size, speed) {
-    this.pos = (pos) ? pos : new Vector(0, 0);
-    this.size = (size) ? size : new Vector(1, 1);
-    this.speed = (speed) ? speed : new Vector(0, 0);
 
-    for (let key in this) {
-      if ( !(this[key] instanceof Vector) && (typeof key !== 'string') ) {
-        console.log('this', this);
-        console.log('!(this[key] instanceof Vector)', !(this[key] instanceof Vector));
-        console.log('key', key);
-        console.log('typeof key', typeof key);
-        throw new Error('Объект должен быть типа Vector');
-      }
-    }
-  }
-  */
   act() {}
 
   get left() {
@@ -201,9 +185,6 @@ class Level {
     if (this.status === null) {
       if (objType === 'lava' || objType === 'fireball') {
         this.status = 'lost';
-      //} else if (objType === 'coin' && actor instanceof 'Actor') {
-      //} else if (objType === 'coin' && actor.constructor.name === 'Actor') {
-      //} else if (objType === 'coin' && Actor.prototype.isPrototypeOf(actor) ) {
       } else if (objType === 'coin') {
         this.removeActor(actor);
         this.status = ( this.noMoreActors(objType) ) ? 'won' : this.status;
@@ -308,7 +289,11 @@ class Fireball extends Actor {
         this.pos = nextPos;
         break;
       case 'lava':
-        level.status = 'lost';
+        if (this.type === 'player') {
+          level.status = 'lost'
+        } else {
+          this.handleObstacle();
+        };
         break;
       default:
         this.handleObstacle();
@@ -394,7 +379,7 @@ class Player extends Actor {
 }
 
 
-/*
+
 let levelsStr = loadLevels();
 
 levelsStr.then( (value) => {
@@ -409,108 +394,6 @@ levelsStr.then( (value) => {
   };
 
   let parser = new LevelParser(dictionary);
-  let display = DOMDisplay;
-  //runLevel(levels[0], DOMDisplay)
-  runGame(levels, parser, display).then( () => alert('Вы выиграли!') );
+
+  runGame(levels, parser, DOMDisplay).then( () => alert('Вы выиграли!') );
 });
-*/
-
-
-
-
-
-const schemas = [
-  [
-    '         ',
-    '         ',
-    '    =    ',
-    '       o ',
-    '     !xxx',
-    ' @       ',
-    'xxx!     ',
-    '         '
-  ],
-  [
-    '      v  ',
-    '         ',
-    '  v      ',
-    '        o',
-    '        x',
-    '@   x    ',
-    'x        ',
-    '         '
-  ]
-];
-const actorDict = {
-  '@': Player,
-  'o': Coin,
-  '=': HorizontalFireball,
-  '|': VerticalFireball,
-  'v': FireRain
-}
-const parser = new LevelParser(actorDict);
-runGame(schemas, parser, DOMDisplay)
-  .then(() => alert('Вы выиграли приз!'));
-//  .then(() => console.log('Вы выиграли приз!'), () => runLevel(parser, DOMDisplay));
-
-
-
-
-//function runLevel(level, Display)
-//var display = new Display(document.body, level);
-
-
-/*
-app.js:67 Uncaught (in promise) TypeError: Cannot read property 'x' of undefined
-    at DOMDisplay.updateActor (app.js:67)
-    at DOMDisplay.updateActors (app.js:83)
-    at DOMDisplay.drawFrame (app.js:92)
-    at new DOMDisplay (app.js:44)
-    at done (app.js:165)
-    at new Promise (<anonymous>)
-    at runLevel (app.js:163)
-    at startLevel (app.js:255)
-    at done (app.js:266)
-    at new Promise (<anonymous>)
-*/
-
-
-/*
-this Player {pos: Vector, size: Vector, speed: Vector}
-game.js:34 this[key] Vector {x: 0, y: 0}
-game.js:35 !(this[key] instanceof Vector) false
-game.js:32 =========================
-game.js:33 this Player {pos: Vector, size: Vector, speed: Vector}
-game.js:34 this[key] ƒ (obstacle) {
-    if (this.wontJump) {
-      this.speed.y = -jumpSpeed;
-    } else {
-      this.speed.y = 0;
-    }
-  }
-game.js:35 !(this[key] instanceof Vector) true
-app.js:50 Uncaught (in promise) TypeError: Cannot read property 'forEach' of undefined
-    at DOMDisplay.drawBackground (app.js:50)
-    at new DOMDisplay (app.js:42)
-    at done (app.js:165)
-    at new Promise (<anonymous>)
-    at runLevel (app.js:163)
-    at levelsStr.then (game.js:391)
-drawBackground @ app.js:50
-DOMDisplay @ app.js:42
-done @ app.js:165
-runLevel @ app.js:163
-levelsStr.then @ game.js:391
-Promise.then (async)
-(anonymous) @ game.js:378
-game.js:37 Uncaught (in promise) Error: Объект должен быть типа Vector
-    at new Actor (game.js:37)
-    at new Player (game.js:364)
-    at LevelParser.createActors (game.js:243)
-    at LevelParser.parse (game.js:255)
-    at startLevel (app.js:255)
-    at done (app.js:266)
-    at new Promise (<anonymous>)
-    at runGame (app.js:253)
-    at levelsStr.then (game.js:392)
-*/
