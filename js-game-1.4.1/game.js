@@ -22,6 +22,7 @@ class Vector {
 
 
 class Actor {
+
   constructor( pos=new Vector(0, 0), size=new Vector(1, 1),
               speed=new Vector(0, 0) ) {
     this.pos = pos;
@@ -29,12 +30,28 @@ class Actor {
     this.speed = speed;
 
     for (let key in this) {
-      if ( !(this[key] instanceof Vector) ) {
+      if ( !(this[key] instanceof Vector) && (typeof key !== 'string')  ) {
         throw new Error('Объект должен быть типа Vector');
       }
     }
   }
+  /*
+  constructor(pos, size, speed) {
+    this.pos = (pos) ? pos : new Vector(0, 0);
+    this.size = (size) ? size : new Vector(1, 1);
+    this.speed = (speed) ? speed : new Vector(0, 0);
 
+    for (let key in this) {
+      if ( !(this[key] instanceof Vector) && (typeof key !== 'string') ) {
+        console.log('this', this);
+        console.log('!(this[key] instanceof Vector)', !(this[key] instanceof Vector));
+        console.log('key', key);
+        console.log('typeof key', typeof key);
+        throw new Error('Объект должен быть типа Vector');
+      }
+    }
+  }
+  */
   act() {}
 
   get left() {
@@ -81,7 +98,6 @@ class Level {
     this.grid = grid;
     this.actors = actors;
     this.player = actors.filter( item => item.type === 'player' )[0];
-console.log('this.player', this.player);
     this.height = grid.length;
     this.width = (grid.length !== 0) ?
       Math.max( ...grid.map(i => i.length) ) :
@@ -185,7 +201,10 @@ console.log('this.player', this.player);
     if (this.status === null) {
       if (objType === 'lava' || objType === 'fireball') {
         this.status = 'lost';
-      } else if (objType === 'coin' && actor instanceof Actor) {
+      //} else if (objType === 'coin' && actor instanceof 'Actor') {
+      //} else if (objType === 'coin' && actor.constructor.name === 'Actor') {
+      //} else if (objType === 'coin' && Actor.prototype.isPrototypeOf(actor) ) {
+      } else if (objType === 'coin') {
         this.removeActor(actor);
         this.status = ( this.noMoreActors(objType) ) ? 'won' : this.status;
       }
@@ -261,7 +280,7 @@ class LevelParser {
 
 
 class Fireball extends Actor {
-  constructor(pos, speed) {
+  constructor(pos=new Vector(), speed=new Vector()) {
     super();
     this.pos = pos;
     this.speed = speed;
@@ -319,7 +338,7 @@ class FireRain extends Fireball {
     super();
     this.speed = new Vector(0, 3);
     this.pos = position;
-    this.initPos = this.pos;
+    this.initPos = position;
   }
 
   handleObstacle() {
@@ -397,46 +416,9 @@ levelsStr.then( (value) => {
 */
 
 
-const grid = [
-  [undefined, undefined],
-  ['wall', 'wall']
-];
-
-function MyCoin(title) {
-  this.type = 'coin';
-  this.title = title;
-}
-MyCoin.prototype = Object.create(Actor);
-MyCoin.constructor = MyCoin;
-
-const goldCoin = new MyCoin('Золото');
-const bronzeCoin = new MyCoin('Бронза');
-const player = new Player();
-const fireball = new Actor();
-
-const level = new Level(grid, [ goldCoin, bronzeCoin, player, fireball ]);
-
-level.playerTouched('coin', goldCoin);
-level.playerTouched('coin', bronzeCoin);
-
-if (level.noMoreActors('coin')) {
-  console.log('Все монеты собраны');
-  console.log(`Статус игры: ${level.status}`);
-}
-
-const obstacle = level.obstacleAt(new Vector(1, 1), player.size);
-if (obstacle) {
-  console.log(`На пути препятствие: ${obstacle}`);
-}
-
-const otherActor = level.actorAt(player);
-if (otherActor === fireball) {
-  console.log('Пользователь столкнулся с шаровой молнией');
-}
 
 
 
-/*
 const schemas = [
   [
     '         ',
@@ -450,7 +432,7 @@ const schemas = [
   ],
   [
     '      v  ',
-    '    v    ',
+    '         ',
     '  v      ',
     '        o',
     '        x',
@@ -468,9 +450,8 @@ const actorDict = {
 }
 const parser = new LevelParser(actorDict);
 runGame(schemas, parser, DOMDisplay)
-  .then(() => console.log('Вы выиграли приз!'));
-*/
-
+  .then(() => alert('Вы выиграли приз!'));
+//  .then(() => console.log('Вы выиграли приз!'), () => runLevel(parser, DOMDisplay));
 
 
 
