@@ -84,7 +84,7 @@ class Level {
     this.player = actors.filter( item => item.type === 'player' )[0];
     this.height = grid.length;
     this.width = (grid.length !== 0) ?
-      Math.max( ...grid.map(i => i.length) ) :
+      Math.max( ...grid.map(row => row.length) ) :
       0;
     this.status = null;
     this.finishDelay = 1;
@@ -104,11 +104,7 @@ class Level {
         if (obj !== item) {
           let horizontal = (obj.right > item.left) && (obj.left < item.right);
           let vertical = (obj.bottom > item.top) && (obj.top < item.bottom);
-          let fullIntersect = (obj.right === item.right) &&
-                              (obj.left === item.left) &&
-                              (obj.top === item.top) &&
-                              (obj.bottom === item.bottom);
-          if ( (horizontal && vertical) || fullIntersect ) {
+          if (horizontal && vertical) {
             return item;
           }
         }
@@ -130,7 +126,7 @@ class Level {
       let objAreas = [];
       for (let x = Math.floor(moveTo.x); x < horizontal; x++) {
         for (let y = Math.floor(moveTo.y); y < vertical; y++) {
-          objAreas.push(new Array(x, y));
+          objAreas.push( new Array(x, y) );
         }
       }
       return objAreas;
@@ -147,8 +143,8 @@ class Level {
       let obstacles = [];
       let objAreas = getObjAreas();
 
-      for (let item of objAreas) {
-        let area = this.grid[ item[1] ][ item[0] ];
+      for (let [x, y] of objAreas) {
+        let area = this.grid[y][x];
         if ( area !== undefined ) {
           obstacles.push(area);
         }
@@ -163,11 +159,11 @@ class Level {
       }
     }
   }
-
+  
   removeActor(obj) {
-    for ( let item of this.actors.entries() ) {
-      if (item[1] === obj) {
-        this.actors.splice(item[0], 1);
+    for ( let [index, item] of this.actors.entries() ) {
+      if (item === obj) {
+        this.actors.splice(index, 1);
       }
     }
   }
@@ -241,9 +237,9 @@ class LevelParser {
     let actors = [];
     for ( let [rowIndex, string] of strings.entries() ) {
       for (let cellIndex = 0; cellIndex < string.length; cellIndex++) {
-        let cls = this.actorFromSymbol(string[cellIndex]);
-        if (cls) {
-          let obj = new cls( new Vector(cellIndex, rowIndex) );
+        let actorClass = this.actorFromSymbol( string[cellIndex] );
+        if (actorClass) {
+          let obj = new actorClass( new Vector(cellIndex, rowIndex) );
           if (obj instanceof Actor) {
             actors.push(obj);
           }
@@ -284,20 +280,11 @@ class Fireball extends Actor {
     let nextPos = this.getNextPosition(time);
     let obstacle = level.obstacleAt(nextPos, this.size);
 
-    switch (obstacle) {
-      case undefined:
+    if (obstacle === undefined) {
         this.pos = nextPos;
-        break;
-      case 'lava':
-        if (this.type === 'player') {
-          level.status = 'lost'
-        } else {
-          this.handleObstacle();
-        };
-        break;
-      default:
+	} else if (this.type !== 'player') {
         this.handleObstacle();
-    }
+	}
   }
 }
 
