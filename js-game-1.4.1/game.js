@@ -112,7 +112,9 @@ class Level {
       return undefined;
     }
   }
-
+  
+  
+  // Данный вариант метода не допускает частичного захода на лаву ногами
   obstacleAt(moveTo, size) {
     for ( let item of [].slice(arguments) ) {
       if ( !(item instanceof Vector) ) {
@@ -159,6 +161,45 @@ class Level {
       }
     }
   }
+ 
+/*
+  // Данный вариант метода допускает частичный заход на лаву ногами
+  obstacleAt(moveTo, size) {
+    for ( let item of [...arguments] ) {
+      if ( !(item instanceof Vector) ) {
+        throw new Error('Объект должен быть типа Vector');
+      }
+    }
+
+    const getObjAreas = () => {
+      let horizontal = Math.ceil(moveTo.x + size.x);
+      let vertical = Math.ceil(moveTo.y + size.y);
+
+      for (let x = Math.floor(moveTo.x); x < horizontal; x++) {
+        for (let y = Math.floor(moveTo.y); y < vertical; y++) {
+		  let area = this.grid[y][x];
+		  if (area === 'lava') {
+			return 'lava';
+		  } else if (area === 'wall') {
+			return 'wall';
+		  }
+        }
+      }
+	  return undefined;
+    }
+
+    const isBorderWalls = (moveTo.x < 0) || (moveTo.y < 0) ||
+      ( (moveTo.x + size.x) >= this.width );
+
+    if ( (moveTo.y + size.y) >= this.height ) {
+		return 'lava';
+    } else if (isBorderWalls) {
+		return 'wall';
+    } else {
+		return getObjAreas();
+    }
+  }
+ */ 
   
   removeActor(obj) {
     for ( let [index, item] of this.actors.entries() ) {
