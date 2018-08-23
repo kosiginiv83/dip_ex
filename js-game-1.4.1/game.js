@@ -162,7 +162,7 @@ class Level {
     }
   }
  
-/*
+  /*
   // Данный вариант метода допускает частичный заход на лаву ногами
   obstacleAt(moveTo, size) {
     for ( let item of [...arguments] ) {
@@ -199,7 +199,7 @@ class Level {
 		return getObjAreas();
     }
   }
- */ 
+   */
   
   removeActor(obj) {
     for ( let [index, item] of this.actors.entries() ) {
