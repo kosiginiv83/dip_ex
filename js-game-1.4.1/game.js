@@ -116,7 +116,7 @@ class Level {
   
   // Данный вариант метода не допускает частичного захода на лаву ногами
   obstacleAt(moveTo, size) {
-    for ( let item of [].slice(arguments) ) {
+    for ( let item of [...arguments] ) {
       if ( !(item instanceof Vector) ) {
         throw new Error('Объект должен быть типа Vector');
       }
